@@ -24,8 +24,8 @@
    accounts, no leaderboard). Don't ship with it false if you want the
    "login before playing" behavior.
    ════════════════════════════════════════════════════════════════ */
-const SUPABASE_URL = "";
-const SUPABASE_ANON_KEY = "";
+const SUPABASE_URL = "https://vecggijycrkcenwwfbqk.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable__II1ax_2cYqU9MpumqsLbA_XQD1nz_2";
 
 /* True once the two keys above are actually set. */
 const SUPABASE_CONFIGURED = !!(SUPABASE_URL && SUPABASE_ANON_KEY);
