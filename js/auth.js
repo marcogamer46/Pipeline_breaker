@@ -87,8 +87,10 @@ function showForm(authview,finish){
     document.querySelectorAll('.auth-tab').forEach(b=>b.classList.toggle('active',b.dataset.mode===m));
     usernameEl.style.display=(mode==='signup')?'block':'none';
     usernameEl.required=(mode==='signup');
-    emailEl.style.display=(mode==='signup')?'block':'none';
-    emailEl.required=(mode==='signup');
+    // Email is needed for both login and signup (login was broken: email
+    // was hidden in login mode).
+    emailEl.style.display='block';
+    emailEl.required=true;
     submitEl.textContent=(mode==='signup')?'Create account':'Log in';
     feedEl.textContent='';
   };

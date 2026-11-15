@@ -53,10 +53,12 @@
       mode=m;
       document.querySelectorAll('.auth-tab').forEach(b=>b.classList.toggle('active',b.dataset.mode===m));
       const su=(m==='signup');
+      // Email is needed for BOTH login and signup; only Username is
+      // signup-specific. (Login was broken: email was hidden in login mode.)
       document.getElementById('authUsername').style.display=su?'block':'none';
       document.getElementById('authUsername').required=su;
-      document.getElementById('authEmail').style.display=su?'block':'none';
-      document.getElementById('authEmail').required=su;
+      document.getElementById('authEmail').style.display='block';
+      document.getElementById('authEmail').required=true;
       submitBtn.textContent=su?'Create account':'Log in';
       feed.textContent=''; feed.className='feedback';
     };
