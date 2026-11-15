@@ -130,7 +130,7 @@ class App {
     document.getElementById('tbBoard').addEventListener('click',()=>this.openLeaderboard());
     document.getElementById('tbInfo').addEventListener('click',()=>this.showData('info'));
     const admBtn=document.getElementById('tbAdmin');
-    if(admBtn) admBtn.addEventListener('click',()=>this.openAdmin());
+    if(admBtn) admBtn.addEventListener('click',()=>location.href='admin.html');
     const studyBtn=document.getElementById('tbStudy');
     const syncStudyBtn=()=>{
       studyBtn.classList.toggle('active',this.studyMode);

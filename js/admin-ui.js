@@ -1,6 +1,6 @@
 /* Shared Admin panel — backed by the service-role Edge Function
-   (/functions/v1/admin). Loaded by both index.html and learn.html.
-   Exposes window.openAdminPanel(). */
+   (/functions/v1/admin). Loaded by index.html, learn.html, and admin.html.
+   Exposes window.openAdminPanel() and window.adminApi(). */
 
 (function(){
   async function api(action, payload){
@@ -124,4 +124,7 @@
     }));
     await show();
   };
+
+  /* Expose the Edge-Function client for the standalone admin.html console. */
+  window.adminApi=api;
 })();

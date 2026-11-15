@@ -134,14 +134,15 @@ For a nicer domain you can set a custom domain in the same Pages settings.
 - Export/import progress (JSON) — handy for moving between browsers.
 - Daily streak, time played, optional sound, responsive (380px phones),
   keyboard accessible, `prefers-reduced-motion` respected.
-- **Admin panel** — an "Admin" button appears in the top bar (and a floating
-  ⚙ button on the landing page) for everyone. Clicking it asks for the admin
-  username + password (default `chillinmalware` / `0824`, both in
-  `js/config.js`). The panel has two tabs:
-  - **Overview** — public scores roster (points, ranks, aggregates).
+- **Admin console** — a dedicated **`admin.html`** page, reachable from the
+  Admin button in the game's top bar. It is **only visible to the admin
+  account** (profile username `chillinmalware`, from `js/config.js`); other
+  players never see the button or the page's contents. The console has two
+  tabs:
+  - **Overview** — public scores roster (players, points, aggregates).
   - **Players** — full account roster (username, email, created, points,
     solved, banned status) with actions: **set new password**, **reset
-    progress & score**, **ban/unban**, and **delete user**.
+    progress & score**, **ban/unban**, and **delete user**, plus a filter box.
   Players/actions are served by a server-side Edge Function
   (`supabase/functions/admin`, runs with the service-role key). It
   authorizes by verifying the caller's Supabase session token and requiring
