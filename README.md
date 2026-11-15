@@ -134,18 +134,26 @@ For a nicer domain you can set a custom domain in the same Pages settings.
 - Export/import progress (JSON) — handy for moving between browsers.
 - Daily streak, time played, optional sound, responsive (380px phones),
   keyboard accessible, `prefers-reduced-motion` respected.
-- **Admin panel** — an "Admin" button appears in the top bar for everyone.
-  Clicking it asks for the admin username + password (default `chillinmalware`
-  / `0824`, both in `js/config.js`) and opens a read-only class overview
-  (public scores table:
-  roster, points, ranks, aggregates). ⚠️ This is a **client-side gate** —
-  the password ships in `config.js`, so it's trivially bypassable by reading
-  source. That's acceptable because the panel only reads data that is
-  already public, but it is **not** real authorization. For real admin
-  controls (e.g. editing/resetting student progress) add a Supabase
-  `is_admin` flag + a server-side RPC — and note Supabase Auth requires
-  passwords of at least 6 characters, so `0824` can't be a real account
-  password.
+- **Admin panel** — an "Admin" button appears in the top bar (and a floating
+  ⚙ button on the landing page) for everyone. Clicking it asks for the admin
+  username + password (default `chillinmalware` / `0824`, both in
+  `js/config.js`). The panel has two tabs:
+  - **Overview** — public scores roster (points, ranks, aggregates).
+  - **Players** — full account roster (username, email, created, points,
+    solved, banned status) with actions: **set new password**, **reset
+    progress & score**, **ban/unban**, and **delete user**.
+  Players/actions are served by a server-side Edge Function
+  (`supabase/functions/admin`, runs with the service-role key). It
+  authorizes by verifying the caller's Supabase session token and requiring
+  a **profile username of `chillinmalware`** — so you must be signed in as
+  that account to manage players (no static secret ships in the repo).
+  ⚠️ The panel's local password gate is client-side/bypassable (acceptable
+  for a teaching tool); the Edge Function itself enforces the real check.
+  Deploy:
+  1. `supabase functions deploy admin --project-ref <PROJECT_REF>`
+     (or Dashboard → Edge Functions → New Function → paste → Deploy).
+  No secrets required. Supabase Auth requires passwords of at least 6
+  characters, so `0824` can't be a real account password.
 - Flags are normalized and verified client-side against SHA-256 hashes.
   ⚠️ **Security reality:** because this is a fully static site, everything
   needed to check answers ships to the browser — the normalization rules

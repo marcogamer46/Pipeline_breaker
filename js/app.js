@@ -443,7 +443,7 @@ class App {
       this.#setAdminAuthed(true);
       this.beep(900,0.05);
     }
-    await this.#renderAdmin();
+    openAdminPanel();
   }
   #askAdminLogin(){
     return new Promise(resolve=>{
