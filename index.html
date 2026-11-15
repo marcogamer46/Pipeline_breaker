@@ -57,6 +57,14 @@
       <button type="submit" class="btn primary block" id="authSubmit">Log in</button>
       <button type="button" class="btn block" id="guestBtn" style="margin-top:8px">Continue as guest — no account</button>
     </form>
+
+    <div class="auth-local" id="verifyBox" style="display:none">
+      <div class="auth-local-icon">📬</div>
+      <h3 style="color:var(--green);margin:6px 0 4px">Almost there — check your email</h3>
+      <p style="color:var(--text-dim);line-height:1.7;max-width:320px">We sent a confirmation link to
+        <b id="verifyEmail" style="color:var(--text)"></b>. Click it to activate your account, then log in below.</p>
+      <button type="button" class="btn primary block" id="verifyGoLogin">Log in</button>
+    </div>
   </div>
 
   <div class="land-stats" id="landStats"></div>

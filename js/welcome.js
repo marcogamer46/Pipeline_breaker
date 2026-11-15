@@ -65,6 +65,15 @@
     tabs.querySelectorAll('.auth-tab').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.mode)));
     setMode('login');
 
+    // "Check your email" success state → back to login.
+    const verifyBox=document.getElementById('verifyBox');
+    const verifyGoLogin=document.getElementById('verifyGoLogin');
+    if(verifyGoLogin) verifyGoLogin.addEventListener('click',()=>{
+      if(verifyBox) verifyBox.style.display='none';
+      form.style.display='block';
+      setMode('login');
+    });
+
     // Accounts are required to play — remove the direct "enter" shortcut
     // (it would just bounce back here from the gated game page).
     if(REQUIRE_ACCOUNT){
@@ -119,10 +128,11 @@
           feed.textContent=res.error.message||'Something went wrong.';
           feed.className='feedback bad';
         } else if(mode==='signup' && !(res.data&&res.data.session)){
-          feed.textContent='Account created — check your inbox to confirm your email, then log in.';
-          feed.className='feedback ok';
-          setMode('login');
-          submitBtn.disabled=false; submitBtn.textContent='Log in';
+          // Email confirmation is on → dedicated success state.
+          form.style.display='none';
+          document.getElementById('verifyEmail').textContent=email;
+          document.getElementById('verifyBox').style.display='flex';
+          const vg=document.getElementById('verifyGoLogin'); if(vg) vg.focus();
           return;
         } else {
           feed.textContent="You're in. Happy learning!";
