@@ -569,7 +569,11 @@ h4{letter-spacing:.3px}
   border:2px solid var(--cyan);border-radius:12px;
   box-shadow:0 0 0 9999px rgba(0,0,0,.42);
   transition:left .28s ease,top .28s ease,width .28s ease,height .28s ease}
-#tourOverlay .tour-box{transition:left .28s ease,top .28s ease}
+#tourOverlay .tour-box{transition:left .28s ease,top .28s ease;position:relative}
+#tourOverlay .tour-box .caret{position:absolute;top:50%;margin-top:-8px;width:0;height:0;border:solid transparent;display:none}
+#tourOverlay .tour-box.side-right .caret{left:-12px;border-width:8px 12px 8px 0;border-right-color:var(--panel)}
+#tourOverlay .tour-box.side-left .caret{right:-12px;border-width:8px 0 8px 12px;border-left-color:var(--panel)}
+#tourOverlay .tour-box.side-right .caret,#tourOverlay .tour-box.side-left .caret{display:block}
 @media (prefers-reduced-motion: reduce){
   #tourSpotlight{transition:none}
 }

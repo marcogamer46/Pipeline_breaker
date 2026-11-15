@@ -306,6 +306,7 @@ class App {
     const ov=document.createElement('div'); ov.className='overlay'; ov.id='tourOverlay';
     ov.innerHTML=`<div id="tourSpotlight"></div>
       <div class="overlay-box tour-box" style="max-width:560px">
+        <i class="caret"></i>
       <div style="padding:20px 22px 8px;display:flex;align-items:center;gap:14px">
         <div class="tour-icon" id="tourIcon"></div>
         <div style="flex:1">
@@ -345,11 +346,13 @@ class App {
       spotlight.style.width=r.width+'px'; spotlight.style.height=r.height+'px';
       const cw=card.offsetWidth||360, ch=card.offsetHeight||240;
       const vw=innerWidth, vh=innerHeight, m=14;
-      let left, top;
-      if(r.right+cw+m<=vw-m) left=r.right+m;
-      else if(r.left-cw-m>=m) left=r.left-cw-m;
+      let left, top, side='center';
+      if(r.right+cw+m<=vw-m){ left=r.right+m; side='right'; }
+      else if(r.left-cw-m>=m){ left=r.left-cw-m; side='left'; }
       else left=(vw-cw)/2;
       top=Math.min(Math.max(r.top+r.height/2-ch/2,m),vh-ch-m);
+      card.classList.remove('side-left','side-right');
+      if(side!=='center') card.classList.add('side-'+side);
       card.style.position='absolute'; card.style.left=left+'px'; card.style.top=top+'px';
     };
     const onResize=()=>requestAnimationFrame(layout);
@@ -368,6 +371,9 @@ class App {
       reanimate(body); reanimate(document.getElementById('tourTitle'));
       document.getElementById('tourNext').textContent=(i===steps.length-1)?'Finish':'Next →';
       document.getElementById('tourBack').style.visibility=(i===0)?'hidden':'visible';
+      // Make sure the thing being explained is actually on-screen so the
+      // spotlight + box can land on it (e.g. #chview is hidden in the info view).
+      if(s.target==='chview' && this.view!=='challenge') this.openChallenge(1);
       if(s.target){ spot=document.getElementById(s.target); if(spot) spot.classList.add('tour-spot'); }
       requestAnimationFrame(layout);
     };
