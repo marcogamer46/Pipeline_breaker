@@ -1,0 +1,8 @@
+# Owner-only plaintext flag answers — NEVER ship (see README)
+ANSWER_KEY.md
+
+# Local/env junk
+.env
+*.local
+.DS_Store
+node_modules/

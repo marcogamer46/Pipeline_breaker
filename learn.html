@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PIPELINE//BREAKER — play</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="app">
+
+  <!-- TOP BAR -->
+  <header id="topbar">
+    <a class="brand" href="index.html" style="text-decoration:none">PIPELINE<span class="c">//</span>BREAKER</a>
+    <div class="tb-spacer"></div>
+    <span class="tb-chip" id="tbPoints">0 pts</span>
+    <button class="btn" id="tbCtrl">Cheat Sheet</button>
+    <button class="btn" id="tbFlash">Flashcards</button>
+    <button class="btn" id="tbDash">Dashboard</button>
+    <button class="btn" id="tbBoard">Leaderboard</button>
+    <button class="btn" id="tbInfo">Instructions</button>
+    <button class="btn" id="tbStudy">Study Mode</button>
+    <span class="tb-chip" id="tbUser"></span>
+    <button class="btn" id="tbAdmin" style="display:none" title="Admin panel">Admin</button>
+    <button class="btn danger" id="tbLogout">Log out</button>
+  </header>
+
+  <div id="layout">
+    <!-- SIDEBAR -->
+    <aside id="sidebar"><nav id="catlist"></nav></aside>
+
+    <!-- CENTER -->
+    <main id="center">
+      <div id="chview"></div>
+      <div id="viewdata">
+        <div class="view-tabs">
+          <button class="btn active" data-vt="cheat">Cheat Sheet</button>
+          <button class="btn" data-vt="flash">Flashcards</button>
+          <button class="btn" data-vt="dash">Dashboard</button>
+          <button class="btn" data-vt="info">How to play</button>
+        </div>
+        <div id="cheatsheet"></div>
+        <div id="flashcards"></div>
+        <div id="dashboard"></div>
+        <div id="instructions"></div>
+      </div>
+    </main>
+
+    <!-- RIGHT PANEL -->
+    <aside id="rightpanel">
+      <div class="rp-section">
+        <h3>Scoreboard</h3>
+        <div id="scoreboard"></div>
+      </div>
+      <div class="rp-section">
+        <h3>Terminal</h3>
+        <div id="term" tabindex="0"></div>
+        <div class="term-line">
+          <span class="pfx" id="tpfx">player@pipeline:~$</span>
+          <input id="terminput" autocomplete="off" spellcheck="false" aria-label="terminal command">
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- Leaderboard overlay -->
+<div id="boardOverlay" class="overlay hidden">
+  <div class="overlay-box">
+    <div class="overlay-head"><h3>Class Leaderboard</h3><button class="btn" id="boardClose">✕</button></div>
+    <div id="boardList"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/flags.js"></script>
+<script src="js/challenges.js"></script>
+<script src="js/simulator.js"></script>
+<script src="js/db.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
