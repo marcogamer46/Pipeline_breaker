@@ -103,10 +103,11 @@
     // Cloud mode: everyone logs in — no guest path.
     guestBtn.style.display='none';
 
-    // Floating Admin button (top-right) — clear of the hero chips, always
-    // clickable. Opens the same password-gated panel.
+    // Floating Admin button (top-right) — hidden from the landing page. The
+    // panel is only reachable in-game by the admin account (see app.js
+    // #tbAdmin gating). Kept out of the DOM flow so students never see it.
     const adminFab=document.getElementById('adminFab');
-    if(adminFab){ adminFab.style.display=''; adminFab.addEventListener('click',openLandingAdmin); }
+    if(adminFab) adminFab.style.display='none';
 
     // Forgot-password → reset email.
     const forgotBtn=document.getElementById('forgotBtn');

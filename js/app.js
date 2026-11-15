@@ -89,7 +89,12 @@ class App {
     // hiding the button behind a username match added friction without any
     // real security (it was client-side and bypassable anyway).
     const tba=document.getElementById('tbAdmin');
-    if(tba) tba.style.display='';
+    if(tba){
+      // Only the admin account sees the Admin button (server-side Edge
+      // Function still enforces the real authorization).
+      const isAdmin=!!(this.cloud && this.username && this.username===ADMIN_USER);
+      tba.style.display=isAdmin?'':'none';
+    }
     this.#bindTopbar();
     this.#buildSidebar();
     this.#bindTerminal();
