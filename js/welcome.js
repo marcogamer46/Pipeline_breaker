@@ -103,6 +103,11 @@
     // Cloud mode: everyone logs in — no guest path.
     guestBtn.style.display='none';
 
+    // Floating Admin button (top-right) — clear of the hero chips, always
+    // clickable. Opens the same password-gated panel.
+    const adminFab=document.getElementById('adminFab');
+    if(adminFab){ adminFab.style.display=''; adminFab.addEventListener('click',openLandingAdmin); }
+
     // Forgot-password → reset email.
     const forgotBtn=document.getElementById('forgotBtn');
     if(forgotBtn) forgotBtn.addEventListener('click',askForgot);
