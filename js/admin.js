@@ -17,7 +17,8 @@
     const isAdmin=!!(payload.cloud && ((payload.username===ADMIN_USER)
       || (ADMIN_EMAIL&&payload.email===ADMIN_EMAIL)));
     if(!isAdmin){
-      const who=`Signed in as @${esc(payload.username||'—')}${payload.email?` (${esc(payload.email)})`:''}`;
+      const who=!payload.cloud ? 'You are <b>not signed in</b>.'
+        : `Signed in as @${esc(payload.username||'—')}${payload.email?` (${esc(payload.email)})`:''}`;
       $('admBody').innerHTML=`<div class="auth-local" style="max-width:480px;margin:70px auto">
         <div class="auth-local-icon">🔐</div>
         <p style="line-height:1.75">${who}<br>You must be signed in <b>as the admin account</b>
