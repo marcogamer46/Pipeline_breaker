@@ -99,8 +99,12 @@ const DB={
     const c=sb(); if(!c) return {error:{message:'Supabase is not configured (fill js/config.js).'}};
     const {data,error}=await c.auth.signUp({email,password});
     if(error) return {error};
+    // When email confirmation is ON, signUp returns NO session (the new
+    // user must confirm before logging in). Row creation must be deferred
+    // until then — an unauthenticated insert would trip the RLS profile
+    // policy (auth.uid() is null). loadCloudState lazily creates the rows.
     const uid=data.user&&data.user.id;
-    if(uid){
+    if(uid && data.session){
       const prof=await c.from('profiles').insert({id:uid,username}).select().single();
       if(prof.error) return {error:prof.error};
       const progress=await c.from('progress').insert({user_id:uid}).select().single();
@@ -126,7 +130,25 @@ const DB={
     const c=sb(); const {data:{session}}=await c.auth.getSession();
     if(!session) return {state:sanitizeState({}), username:null};
     const {data,error}=await c.from('progress').select('*').eq('user_id',session.user.id).maybeSingle();
-    const {data:prof}=await c.from('profiles').select('username').eq('id',session.user.id).maybeSingle();
+    let {data:prof}=await c.from('profiles').select('username').eq('id',session.user.id).maybeSingle();
+
+    // Lazy-create the profile row if it's missing. This happens when email
+    // confirmation is ON: signup returns no session, so row creation was
+    // deferred until this (authenticated) load.
+    if(!prof){
+      const base=(session.user.email||'player').split('@')[0].replace(/[^a-z0-9_]/gi,'')||'player';
+      const guess=base.slice(0,20).length<2 ? 'player' : base.slice(0,20);
+      const mk=async u=>{
+        const r=await c.from('profiles').insert({id:session.user.id, username:u}).select().single();
+        if(r.error) return false;
+        prof=r.data; return true;
+      };
+      if(!(await mk(guess))){
+        for(let i=0;i<5 && !prof;i++) await mk(guess+'_'+Math.random().toString(36).slice(2,6));
+      }
+      if(!prof) prof={username:base};
+    }
+
     let state=sanitizeState({});
     if(data&&!error) state=sanitizeState({
       solved:data.solved,hints:data.hints,egg:!!data.egg,
