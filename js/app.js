@@ -293,6 +293,8 @@ class App {
     if(!this.cloud){
       try{ done=localStorage.getItem('pb_seen_intro')==='1'; }catch(e){}
     }
+    // ?tour=1 forces the tour for testing/demo, regardless of the flag.
+    if(new URLSearchParams(location.search).get('tour')==='1') done=false;
     if(done) return;
     this.#startTour();
   }
