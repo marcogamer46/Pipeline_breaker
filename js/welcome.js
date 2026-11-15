@@ -94,10 +94,6 @@
     // Cloud mode: everyone logs in — no guest path.
     guestBtn.style.display='none';
 
-    // Landing-page Admin button is available to everyone (password-gated).
-    const adminBtn=document.getElementById('adminBtn');
-    if(adminBtn){ adminBtn.style.display=''; adminBtn.addEventListener('click',openLandingAdmin); }
-
     // Forgot-password → reset email.
     const forgotBtn=document.getElementById('forgotBtn');
     if(forgotBtn) forgotBtn.addEventListener('click',askForgot);
