@@ -155,6 +155,7 @@ const DB={
       studyCommitted:!!data.study_committed, cheatUnlocked:!!data.cheat_unlocked, catsDone:data.cats_done
     });
     return {state, username:(prof&&prof.username)||session.user.email||'player',
+            email:session.user.email||null,
             streak:(data&&data.streak)||0, timePlayed:(data&&data.time_played)||0,
             introDone:!!(data&&data.intro_done)};
   },

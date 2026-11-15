@@ -44,3 +44,10 @@ const REQUIRE_ACCOUNT = true;
    accept a 4-char password like the one below). */
 const ADMIN_USER  = 'chillinmalware';
 const ADMIN_PASS  = '0824';
+
+/* The email of the account you use as admin. Recognize the admin by EITHER
+   the username above OR this email — so you don't have to match the
+   username exactly. Set this to the email you sign in with as admin, e.g.:
+     const ADMIN_EMAIL = 'you@example.com';
+   Leave '' to require the username match only. */
+const ADMIN_EMAIL = 'juanmarcodsanchez@gmail.com';

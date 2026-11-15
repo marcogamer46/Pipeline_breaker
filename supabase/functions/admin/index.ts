@@ -14,6 +14,7 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const ADMIN_USER = Deno.env.get("ADMIN_USER") || "chillinmalware";
+const ADMIN_EMAIL = Deno.env.get("ADMIN_EMAIL") || "juanmarcodsanchez@gmail.com";
 
 const sb = createClient(SUPABASE_URL, SERVICE_ROLE, { auth: { persistSession: false } });
 
@@ -40,7 +41,8 @@ Deno.serve(async (req: Request) => {
   const { data: { user }, error: userErr } = await sb.auth.getUser(token);
   if (userErr || !user) return json({ error: "Unauthorized" }, 401);
   const { data: prof } = await sb.from("profiles").select("username").eq("id", user.id).maybeSingle();
-  if ((prof?.username) !== ADMIN_USER) return json({ error: "Unauthorized" }, 401);
+  const isAdmin = (prof?.username) === ADMIN_USER || user.email === ADMIN_EMAIL;
+  if (!isAdmin) return json({ error: "Unauthorized" }, 401);
 
   let action: string;
   let payload: Record<string, unknown>;

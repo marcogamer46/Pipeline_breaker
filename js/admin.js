@@ -8,17 +8,23 @@
 
   const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-  /* Access gate: must be signed in as ADMIN_USER. (The Edge Function applies
-     the same check server-side on every action.) */
+  /* Access gate: must be signed in as the admin — by EITHER the admin
+     username OR the configured admin email. (The Edge Function applies the
+     same check server-side on every action.) */
   async function gate(){
     let payload;
     try{ payload=await loadSession(); }catch(e){ payload={cloud:false}; }
-    if(!payload.cloud || !payload.username || payload.username!==ADMIN_USER){
-      $('admBody').innerHTML=`<div class="auth-local" style="max-width:460px;margin:70px auto">
+    const isAdmin=!!(payload.cloud && ((payload.username===ADMIN_USER)
+      || (ADMIN_EMAIL&&payload.email===ADMIN_EMAIL)));
+    if(!isAdmin){
+      const who=`Signed in as @${esc(payload.username||'—')}${payload.email?` (${esc(payload.email)})`:''}`;
+      $('admBody').innerHTML=`<div class="auth-local" style="max-width:480px;margin:70px auto">
         <div class="auth-local-icon">🔐</div>
-        <p style="line-height:1.75">You must be signed in <b>as the admin account</b>
-          (<span class="hl">${esc(ADMIN_USER)}</span>) to access this console. The
-          server-side Edge Function enforces the same check on every action.</p>
+        <p style="line-height:1.75">${who}<br>You must be signed in <b>as the admin account</b>
+          (<span class="hl">${esc(ADMIN_USER)}</span>, or the email set in
+          <span class="hl">ADMIN_EMAIL</span> in <span class="hl">js/config.js</span>)
+          to access this console. The server-side Edge Function enforces the
+          same check on every action.</p>
         <button type="button" class="btn primary block" id="admGoLogin">Go to login →</button>
       </div>`;
       $('admGoLogin').addEventListener('click',()=>location.href='index.html');

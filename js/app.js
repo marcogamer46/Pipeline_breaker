@@ -75,6 +75,7 @@ class App {
     if(REQUIRE_ACCOUNT && !this.cloud){ location.href='index.html'; return; }
     if(payload.state) this.store.state=payload.state;
     this.username=payload.username||null;
+    this.email=payload.email||null;
     // Per-account first-run tour flag (cloud). Local mode falls back to localStorage.
     this.introDone=!!payload.introDone;
     // cross-device: adopt cloud streak / time-played when signed in
@@ -92,7 +93,8 @@ class App {
     if(tba){
       // Only the admin account sees the Admin button (server-side Edge
       // Function still enforces the real authorization).
-      const isAdmin=!!(this.cloud && this.username && this.username===ADMIN_USER);
+      const isAdmin=!!(this.cloud && ((this.username&&this.username===ADMIN_USER)
+        || (ADMIN_EMAIL&&this.email===ADMIN_EMAIL)));
       tba.style.display=isAdmin?'':'none';
     }
     this.#bindTopbar();
