@@ -134,10 +134,10 @@ For a nicer domain you can set a custom domain in the same Pages settings.
 - Export/import progress (JSON) — handy for moving between browsers.
 - Daily streak, time played, optional sound, responsive (380px phones),
   keyboard accessible, `prefers-reduced-motion` respected.
-- **Admin panel** — signed in as the account whose username equals
-  `ADMIN_USER` (default `chillinmalware`), an "Admin" button appears in the
-  top bar. It asks for the admin password (default `0824`, both in
-  `js/config.js`) and opens a read-only class overview (public scores table:
+- **Admin panel** — an "Admin" button appears in the top bar for everyone.
+  Clicking it asks for the admin username + password (default `chillinmalware`
+  / `0824`, both in `js/config.js`) and opens a read-only class overview
+  (public scores table:
   roster, points, ranks, aggregates). ⚠️ This is a **client-side gate** —
   the password ships in `config.js`, so it's trivially bypassable by reading
   source. That's acceptable because the panel only reads data that is

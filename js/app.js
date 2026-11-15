@@ -82,9 +82,12 @@ class App {
     const tbu=document.getElementById('tbUser');
     if(this.cloud && this.username){ tbu.style.display=''; tbu.textContent='@'+this.username; }
     else tbu.style.display='none';
-    // Admin button only appears to the admin account itself.
+    // Admin button is visible to everyone; access is gated by the admin
+    // password in #askAdminLogin. The panel only reads public scores, so
+    // hiding the button behind a username match added friction without any
+    // real security (it was client-side and bypassable anyway).
     const tba=document.getElementById('tbAdmin');
-    if(tba) tba.style.display=(this.username===ADMIN_USER)?'':'none';
+    if(tba) tba.style.display='';
     this.#bindTopbar();
     this.#buildSidebar();
     this.#bindTerminal();
