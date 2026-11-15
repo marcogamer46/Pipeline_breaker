@@ -53,8 +53,12 @@ create table if not exists public.progress (
   streak int not null default 0,
   time_played int not null default 0,
   total_points int not null default 0,
+  intro_done boolean not null default false,
   updated_at timestamptz not null default now()
 );
+
+-- Incremental: add the intro flag to existing progress rows (safe to re-run).
+alter table public.progress add column if not exists intro_done boolean not null default false;
 
 alter table public.progress enable row level security;
 

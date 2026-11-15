@@ -155,7 +155,8 @@ const DB={
       studyCommitted:!!data.study_committed, cheatUnlocked:!!data.cheat_unlocked, catsDone:data.cats_done
     });
     return {state, username:(prof&&prof.username)||session.user.email||'player',
-            streak:(data&&data.streak)||0, timePlayed:(data&&data.time_played)||0};
+            streak:(data&&data.streak)||0, timePlayed:(data&&data.time_played)||0,
+            introDone:!!(data&&data.intro_done)};
   },
   /* Push the in-memory state up to Supabase and refresh the leaderboard row. */
   async saveCloudState(store){
@@ -181,6 +182,13 @@ const DB={
       username:(prof&&prof.username)||session.user.email||'player',
       points, solved_count:solvedCount, rank_name:rank.name
     },{onConflict:'user_id'});
+  },
+  /* Mark the first-run tour as seen for THIS account (follows the account
+     across devices/browsers, unlike the old localStorage flag). */
+  async markIntroDone(){
+    const c=sb(); const {data:{session}}=await c.auth.getSession();
+    if(!session) return;
+    await c.from('progress').update({intro_done:true}).eq('user_id',session.user.id).catch(()=>{});
   },
   /* Fetch the public leaderboard (top 50 by points). */
   async leaderboard(){

@@ -75,6 +75,8 @@ class App {
     if(REQUIRE_ACCOUNT && !this.cloud){ location.href='index.html'; return; }
     if(payload.state) this.store.state=payload.state;
     this.username=payload.username||null;
+    // Per-account first-run tour flag (cloud). Local mode falls back to localStorage.
+    this.introDone=!!payload.introDone;
     // cross-device: adopt cloud streak / time-played when signed in
     if(this.cloud && payload.streak!=null) this.streak=+payload.streak||this.streak;
     if(this.cloud && payload.timePlayed!=null) this.timePlayed=+payload.timePlayed||this.timePlayed;
@@ -282,13 +284,24 @@ class App {
     }
   }
 
-  /* One-time onboarding modal explaining the flag format. Dismissed
-     once per browser (remembered in localStorage). */
+  /* One-time onboarding modal explaining the flag format. Dismissed once
+     PER ACCOUNT (the flag lives on the account's cloud progress row so it
+     follows them across devices/browsers). Local mode falls back to a
+     per-browser localStorage flag. */
   #maybeIntro(){
-    let seen=false;
-    try{ seen=localStorage.getItem('pb_seen_intro')==='1'; }catch(e){}
-    if(seen) return;
+    let done=!!this.introDone;
+    if(!this.cloud){
+      try{ done=localStorage.getItem('pb_seen_intro')==='1'; }catch(e){}
+    }
+    if(done) return;
     this.#startTour();
+  }
+  /* Remember the tour was shown. Cloud: update the account's progress row.
+     Also set the localStorage flag so local mode is remembered. */
+  #rememberIntroDone(){
+    this.introDone=true;
+    try{ localStorage.setItem('pb_seen_intro','1'); }catch(e){}
+    if(this.cloud) DB.markIntroDone();
   }
 
   /* A short guided tour for first-time players — walks them through the
@@ -378,8 +391,8 @@ class App {
       requestAnimationFrame(layout);
     };
     let cleanupTour=()=>{};
-    const end=()=>{ clearSpot(); cleanupTour(); ov.remove(); try{ localStorage.setItem('pb_seen_intro','1'); }catch(e){ } this.#firstRunDone(true); };
-    const skip=()=>{ clearSpot(); cleanupTour(); ov.remove(); try{ localStorage.setItem('pb_seen_intro','1'); }catch(e){ } this.#firstRunDone(false); };
+    const end=()=>{ clearSpot(); cleanupTour(); ov.remove(); this.#rememberIntroDone(); this.#firstRunDone(true); };
+    const skip=()=>{ clearSpot(); cleanupTour(); ov.remove(); this.#rememberIntroDone(); this.#firstRunDone(false); };
     document.getElementById('tourNext').addEventListener('click',()=>{ if(i<steps.length-1){ i++; render(); } else end(); });
     document.getElementById('tourBack').addEventListener('click',()=>{ if(i>0){ i--; render(); } });
     document.getElementById('tourClose').addEventListener('click',skip);

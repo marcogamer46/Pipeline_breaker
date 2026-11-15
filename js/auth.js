@@ -32,7 +32,7 @@ async function loadSession(){
       const {error}=await c.auth.getUser();
       if(!error){
         const p=await DB.loadCloudState();
-        return {cloud:true, state:p.state, username:p.username};
+        return {cloud:true, state:p.state, username:p.username, introDone:!!p.introDone};
       }
       // stale / invalid session → drop it; the user must log in again
       await c.auth.signOut().catch(()=>{});
