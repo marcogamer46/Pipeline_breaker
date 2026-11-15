@@ -562,6 +562,18 @@ h4{letter-spacing:.3px}
 #admU:focus,#admP:focus{outline:2px solid var(--cyan);outline-offset:1px;border-color:var(--cyan)}
 .admin-box .grow:hover{background:rgba(47,214,232,.04)}
 
+/* ================= Guided tour: transparent backdrop + moving spotlight ================= */
+/* Don't blur/hide the whole app → new players can still see the UI. */
+#tourOverlay{background:transparent;backdrop-filter:none !important;-webkit-backdrop-filter:none !important;padding:0}
+#tourSpotlight{position:absolute;left:0;top:0;width:0;height:0;pointer-events:none;
+  border:2px solid var(--cyan);border-radius:12px;
+  box-shadow:0 0 0 9999px rgba(0,0,0,.42);
+  transition:left .28s ease,top .28s ease,width .28s ease,height .28s ease}
+#tourOverlay .tour-box{transition:left .28s ease,top .28s ease}
+@media (prefers-reduced-motion: reduce){
+  #tourSpotlight{transition:none}
+}
+
 /* ================= Auth: forgot-password link + reset page ================= */
 .forgot-link{background:none;border:none;color:var(--cyan);font-size:12px;
   font-family:var(--mono);cursor:pointer;padding:0;letter-spacing:.4px}

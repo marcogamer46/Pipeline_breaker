@@ -55,7 +55,7 @@
       const su=(m==='signup');
       // Email is needed for BOTH login and signup; only Username is
       // signup-specific. (Login was broken: email was hidden in login mode.)
-      document.getElementById('authUsername').style.display=su?'block':'none';
+      document.getElementById('authUsernameWrap').style.display=su?'block':'none';
       document.getElementById('authUsername').required=su;
       document.getElementById('authEmail').style.display='block';
       document.getElementById('authEmail').required=true;

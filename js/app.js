@@ -304,7 +304,8 @@ class App {
       { icon:'🎉', title:"You're set", body:`That's it — good luck. Fetch, decode, execute.` },
     ];
     const ov=document.createElement('div'); ov.className='overlay'; ov.id='tourOverlay';
-    ov.innerHTML=`<div class="overlay-box tour-box" style="max-width:560px">
+    ov.innerHTML=`<div id="tourSpotlight"></div>
+      <div class="overlay-box tour-box" style="max-width:560px">
       <div style="padding:20px 22px 8px;display:flex;align-items:center;gap:14px">
         <div class="tour-icon" id="tourIcon"></div>
         <div style="flex:1">
@@ -327,6 +328,32 @@ class App {
       </div></div>`;
     document.body.appendChild(ov);
     let i=0, spot=null;
+    const spotlight=ov.querySelector('#tourSpotlight');
+    const card=ov.querySelector('.tour-box');
+
+    /* Put the highlight ring around the target and park the card next to it
+       (right side if it fits, else left, else centered), clamped to viewport. */
+    const layout=()=>{
+      if(!spot){
+        spotlight.style.display='none';
+        card.style.position=''; card.style.left=''; card.style.top='';
+        return;
+      }
+      const r=spot.getBoundingClientRect();
+      spotlight.style.display='block';
+      spotlight.style.left=r.left+'px'; spotlight.style.top=r.top+'px';
+      spotlight.style.width=r.width+'px'; spotlight.style.height=r.height+'px';
+      const cw=card.offsetWidth||360, ch=card.offsetHeight||240;
+      const vw=innerWidth, vh=innerHeight, m=14;
+      let left, top;
+      if(r.right+cw+m<=vw-m) left=r.right+m;
+      else if(r.left-cw-m>=m) left=r.left-cw-m;
+      else left=(vw-cw)/2;
+      top=Math.min(Math.max(r.top+r.height/2-ch/2,m),vh-ch-m);
+      card.style.position='absolute'; card.style.left=left+'px'; card.style.top=top+'px';
+    };
+    const onResize=()=>requestAnimationFrame(layout);
+    window.addEventListener('resize',onResize);
     const clearSpot=()=>{ if(spot){ spot.classList.remove('tour-spot'); spot=null; } };
     const reanimate=el=>{ el.classList.remove('anim'); void el.offsetWidth; el.classList.add('anim'); };
     const render=()=>{
@@ -342,6 +369,7 @@ class App {
       document.getElementById('tourNext').textContent=(i===steps.length-1)?'Finish':'Next →';
       document.getElementById('tourBack').style.visibility=(i===0)?'hidden':'visible';
       if(s.target){ spot=document.getElementById(s.target); if(spot) spot.classList.add('tour-spot'); }
+      requestAnimationFrame(layout);
     };
     let cleanupTour=()=>{};
     const end=()=>{ clearSpot(); cleanupTour(); ov.remove(); try{ localStorage.setItem('pb_seen_intro','1'); }catch(e){ } this.#firstRunDone(true); };
@@ -352,7 +380,8 @@ class App {
     document.getElementById('tourSkip').addEventListener('click',skip);
     ov.addEventListener('click',e=>{ if(e.target.id==='tourOverlay') skip(); });
     render();
-    cleanupTour=this.#focusTrap(ov, document.getElementById('tourClose'));
+    const trapCleanup=this.#focusTrap(ov, document.getElementById('tourClose'));
+    cleanupTour=()=>{ window.removeEventListener('resize',onResize); trapCleanup(); };
     ov.addEventListener('esc',skip);
   }
 
