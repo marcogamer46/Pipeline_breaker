@@ -166,6 +166,19 @@ const DB={
     const {data,error}=await c.from('scores').select('*').order('points',{ascending:false}).limit(50);
     if(error) return [];
     return data||[];
+  },
+  /* Send a password-reset email. The link lands on reset.html, which
+     sets the new password. */
+  async resetPassword(email){
+    const c=sb(); if(!c) return {error:{message:'Supabase is not configured (fill js/config.js).'}};
+    const {error}=await c.auth.resetPasswordForEmail(email,{redirectTo:location.origin+'/reset.html'});
+    return error?{error}:{ok:true};
+  },
+  /* Set a new password for the signed-in (recovery) session. */
+  async updatePassword(newPass){
+    const c=sb(); if(!c) return {error:{message:'Supabase is not configured (fill js/config.js).'}};
+    const {error}=await c.auth.updateUser({password:newPass});
+    return error?{error}:{ok:true};
   }
 };
 

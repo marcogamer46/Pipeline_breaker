@@ -49,6 +49,10 @@
       <label for="authPassword">Password</label>
       <input id="authPassword" type="password" autocomplete="current-password" placeholder="••••••••" minlength="6" required>
 
+      <div style="display:flex;justify-content:flex-end;margin-top:6px">
+        <button type="button" id="forgotBtn" class="forgot-link">Forgot password?</button>
+      </div>
+
       <div class="feedback" id="authFeed"></div>
       <button type="submit" class="btn primary block" id="authSubmit">Log in</button>
       <button type="button" class="btn block" id="guestBtn" style="margin-top:8px">Continue as guest — no account</button>
@@ -60,6 +64,7 @@
 
 <div id="landingFooter">
   <a class="btn" href="learn.html" id="enterDirect">Enter the game →</a>
+  <button type="button" class="btn" id="adminBtn" style="display:none;margin-left:10px">Admin</button>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

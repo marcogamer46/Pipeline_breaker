@@ -94,6 +94,14 @@
     // Cloud mode: everyone logs in — no guest path.
     guestBtn.style.display='none';
 
+    // Landing-page Admin button is available to everyone (password-gated).
+    const adminBtn=document.getElementById('adminBtn');
+    if(adminBtn){ adminBtn.style.display=''; adminBtn.addEventListener('click',openLandingAdmin); }
+
+    // Forgot-password → reset email.
+    const forgotBtn=document.getElementById('forgotBtn');
+    if(forgotBtn) forgotBtn.addEventListener('click',askForgot);
+
     // Auth submit
     form.addEventListener('submit',async e=>{
       e.preventDefault();
@@ -137,4 +145,122 @@
 
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot);
   else boot();
+
+  /* ---- landing-page Admin panel (no game login needed) ---- */
+  function openLandingAdmin(){
+    const ov=document.createElement('div'); ov.className='overlay'; ov.id='adminLoginOverlay';
+    ov.innerHTML=`<div class="overlay-box confirm-box" style="max-width:380px">
+      <div style="padding:24px 26px">
+        <div class="tour-icon" style="margin:0 auto 14px">🛡️</div>
+        <h3 style="color:var(--cyan);margin:0 0 6px;text-align:center">Admin access</h3>
+        <div style="font-size:13px;color:var(--text-dim);text-align:center;margin-bottom:16px">Restricted area — enter admin credentials.</div>
+        <label for="admU" style="display:block;font-size:12px;color:var(--text-dim);margin:10px 0 4px">Username</label>
+        <input id="admU" type="text" autocomplete="off" spellcheck="false">
+        <label for="admP" style="display:block;font-size:12px;color:var(--text-dim);margin:10px 0 4px">Password</label>
+        <input id="admP" type="password" autocomplete="off">
+        <div class="feedback" id="admFeed" aria-live="polite"></div>
+        <div style="display:flex;gap:10px;justify-content:center;margin-top:16px">
+          <button type="button" id="admCancel" class="btn">Cancel</button>
+          <button type="button" id="admGo" class="btn primary">Enter</button>
+        </div>
+      </div></div>`;
+    document.body.appendChild(ov);
+    const plain=()=>ov.remove();
+    const submit=()=>{
+      const u=document.getElementById('admU').value.trim();
+      const p=document.getElementById('admP').value;
+      const feed=document.getElementById('admFeed');
+      if(!u||!p){ feed.textContent='Enter both fields.'; feed.className='feedback bad'; return; }
+      if(u===ADMIN_USER && p===ADMIN_PASS){ plain(); renderLandingAdmin(); }
+      else { feed.textContent='Wrong credentials.'; feed.className='feedback bad'; }
+    };
+    ov.addEventListener('click',e=>{ if(e.target.id==='adminLoginOverlay') plain(); });
+    document.getElementById('admGo').addEventListener('click',submit);
+    document.getElementById('admCancel').addEventListener('click',plain);
+    document.getElementById('admP').addEventListener('keydown',e=>{ if(e.key==='Enter') submit(); });
+    document.getElementById('admU').focus();
+  }
+
+  async function renderLandingAdmin(){
+    const ov=document.createElement('div'); ov.className='overlay'; ov.id='adminOverlay';
+    ov.innerHTML=`<div class="overlay-box admin-box" style="max-width:660px">
+      <div style="padding:22px 26px">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px">
+          <h3 style="margin:0;color:var(--cyan);flex:1">Admin — class overview</h3>
+          <button type="button" class="btn" id="admClose" aria-label="close">✕</button>
+        </div>
+        <div id="adStats" style="display:flex;gap:10px;flex-wrap:wrap;margin:12px 0"></div>
+        <div id="adBoard" style="max-height:44vh;overflow:auto;border:1px solid var(--line);border-radius:8px"></div>
+        <div style="display:flex;gap:10px;justify-content:space-between;align-items:center;margin-top:14px;flex-wrap:wrap">
+          <span style="color:var(--text-dim);font-size:11.5px;line-height:1.6">Read-only view of the public scores table.</span>
+          <button type="button" class="btn" id="admRefresh">↻ Refresh</button>
+        </div>
+      </div></div>`;
+    document.body.appendChild(ov);
+    const done=()=>ov.remove();
+    ov.addEventListener('click',e=>{ if(e.target.id==='adminOverlay') done(); });
+    document.getElementById('admClose').addEventListener('click',done);
+    const load=async()=>{
+      const rows=(await DB.leaderboard())||[];
+      const stats=document.getElementById('adStats');
+      const board=document.getElementById('adBoard');
+      const tot=rows.length;
+      const pts=rows.reduce((a,r)=>a+(r.points||0),0);
+      stats.innerHTML=
+        `<span class="ad-stat"><b>${tot}</b> players</span>`+
+        `<span class="ad-stat"><b>${pts.toLocaleString()}</b> total pts</span>`+
+        `<span class="ad-stat"><b>${tot?Math.round(pts/tot):0}</b> avg pts</span>`;
+      board.innerHTML = tot
+        ? `<table style="width:100%;border-collapse:collapse;font-size:13px">
+             <tr style="color:var(--text-dim);text-align:left">
+               <th style="padding:6px 8px">Player</th><th>Pts</th><th>Solved</th><th>Rank</th>
+             </tr>
+             ${rows.map(r=>`<tr style="border-top:1px solid var(--line)">
+                 <td style="padding:6px 8px">${esc(r.username)}</td>
+                 <td>${(r.points||0)}</td><td>${r.solved_count||0}</td><td>${esc(r.rank_name)||'—'}</td>
+             </tr>`).join('')}
+           </table>`
+        : `<div style="padding:18px;color:var(--text-dim);text-align:center">No players yet — leaderboard is empty.</div>`;
+    };
+    await load();
+    document.getElementById('admRefresh').addEventListener('click',load);
+  }
+
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  /* ---- forgot password ---- */
+  function askForgot(){
+    if(!SUPABASE_CONFIGURED){ alert('Supabase is not configured — cannot send reset emails.'); return; }
+    const ov=document.createElement('div'); ov.className='overlay'; ov.id='forgotOverlay';
+    ov.innerHTML=`<div class="overlay-box confirm-box" style="max-width:360px">
+      <div style="padding:24px 26px">
+        <h3 style="color:var(--cyan);margin:0 0 6px;text-align:center">Reset password</h3>
+        <div style="font-size:13px;color:var(--text-dim);text-align:center;margin-bottom:14px">We'll email you a reset link.</div>
+        <label for="fgEmail" style="display:block;font-size:12px;color:var(--text-dim);margin:10px 0 4px">Account email</label>
+        <input id="fgEmail" type="email" autocomplete="email">
+        <div class="feedback" id="fgFeed" aria-live="polite"></div>
+        <div style="display:flex;gap:10px;justify-content:center;margin-top:14px">
+          <button type="button" id="fgCancel" class="btn">Cancel</button>
+          <button type="button" id="fgGo" class="btn primary">Send link</button>
+        </div>
+      </div></div>`;
+    document.body.appendChild(ov);
+    const plain=()=>ov.remove();
+    const submit=async()=>{
+      const em=document.getElementById('fgEmail').value.trim();
+      const feed=document.getElementById('fgFeed');
+      if(!em){ feed.textContent='Enter your email.'; feed.className='feedback bad'; return; }
+      const go=document.getElementById('fgGo'); go.disabled=true; go.textContent='…';
+      const res=await DB.resetPassword(em);
+      go.disabled=false; go.textContent='Send link';
+      if(res.error){ feed.textContent=res.error.message||'Could not send.'; feed.className='feedback bad'; return; }
+      feed.textContent='Sent — check your inbox (and spam).'; feed.className='feedback ok';
+      setTimeout(plain,2200);
+    };
+    ov.addEventListener('click',e=>{ if(e.target.id==='forgotOverlay') plain(); });
+    document.getElementById('fgGo').addEventListener('click',submit);
+    document.getElementById('fgCancel').addEventListener('click',plain);
+    document.getElementById('fgEmail').addEventListener('keydown',e=>{ if(e.key==='Enter') submit(); });
+    document.getElementById('fgEmail').focus();
+  }
 })();

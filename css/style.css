@@ -561,3 +561,9 @@ h4{letter-spacing:.3px}
 #admU,#admP{background:var(--panel2);border:1px solid var(--line);border-radius:6px;color:var(--text);padding:9px 10px;font-size:14px;width:100%;box-sizing:border-box}
 #admU:focus,#admP:focus{outline:2px solid var(--cyan);outline-offset:1px;border-color:var(--cyan)}
 .admin-box .grow:hover{background:rgba(47,214,232,.04)}
+
+/* ================= Auth: forgot-password link + reset page ================= */
+.forgot-link{background:none;border:none;color:var(--cyan);font-size:12px;
+  font-family:var(--mono);cursor:pointer;padding:0;letter-spacing:.4px}
+.forgot-link:hover{text-decoration:underline}
+.forgot-link:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}

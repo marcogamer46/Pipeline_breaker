@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reset password — PIPELINE//BREAKER</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body id="landingBody">
+<main class="landing" style="min-height:100vh">
+  <div class="ascii" id="asciiTitle"></div>
+  <h1 class="hero-title">PIPELINE<span class="c">//</span>BREAKER</h1>
+  <p class="auth-sub">Set a new password for your account.</p>
+
+  <div class="auth-box" id="authBox" style="margin-top:20px">
+    <form id="resetForm" novalidate style="display:none">
+      <label for="newPass">New password</label>
+      <input id="newPass" type="password" autocomplete="new-password" placeholder="••••••••" minlength="6" required>
+      <label for="newPass2">Confirm password</label>
+      <input id="newPass2" type="password" autocomplete="new-password" placeholder="••••••••" minlength="6" required>
+      <div class="feedback" id="feed"></div>
+      <button type="submit" class="btn primary block" id="goBtn">Set new password</button>
+    </form>
+    <div class="auth-local" id="statusBox" style="display:none">
+      <div class="auth-local-icon">📧</div>
+      <p style="color:var(--text-dim);line-height:1.7" id="statusText"></p>
+      <a class="btn" href="index.html">Back to login</a>
+    </div>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/flags.js"></script>
+<script src="js/challenges.js"></script>
+<script src="js/db.js"></script>
+<script src="js/reset.js"></script>
+</body>
+</html>
